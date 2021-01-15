@@ -9,13 +9,14 @@ export default function App() {
   
   useEffect(() => {
      if(text) {
+      setInfo({});
        fetch(`https://kitsu.io/api/edge/anime?filter[text]=${text}&page[limit]=12`)
        .then((response) => response.json())
        .then((response) => {
          setInfo(response)
-       })
+       });
      }
-  }, [text])
+  }, [text]);
 
   return (
     <div className="App">
@@ -23,7 +24,9 @@ export default function App() {
       <SearchInput 
         value={text} 
         onChange={(search) => setText(search)} />
-
+        {text && !info.data && (
+          <span>Carregando...</span>
+        )}
         {info.data && (
           <ul className="animes-list">
             {info.data.map((anime) => (
