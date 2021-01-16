@@ -2,6 +2,9 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import SearchInput from './SearchInput'
 import './styles.css';
+import Pagination from './Pagination';
+
+const LIMIT = 12;
 
 export default function App() {
   const [info, setInfo] = useState({})
@@ -10,7 +13,7 @@ export default function App() {
   useEffect(() => {
      if(text) {
       setInfo({});
-       fetch(`https://kitsu.io/api/edge/anime?filter[text]=${text}&page[limit]=12`)
+       fetch(`https://kitsu.io/api/edge/anime?filter[text]=${text}&page[limit]=${LIMIT}`)
        .then((response) => response.json())
        .then((response) => {
          setInfo(response)
@@ -37,6 +40,7 @@ export default function App() {
             ))}
           </ul>
         )}
+        <Pagination limit={LIMIT} total={1200} offset={240}/>
     </div>
   );
 }
