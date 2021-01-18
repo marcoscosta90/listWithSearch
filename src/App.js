@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import qs from 'qs';
 import './App.css';
 import SearchInput from './SearchInput'
 import './styles.css';
@@ -7,19 +8,33 @@ import Pagination from './Pagination';
 const LIMIT = 12;
 
 export default function App() {
-  const [info, setInfo] = useState({})
+  const [info, setInfo] = useState({});
   const [text, setText] = useState('');
+  const [offset, setOffset] = useState(0);
+
+  console.log(info);
   
   useEffect(() => {
+     
+     // setInfo({});
+     const query = {
+       page: {
+         limit: LIMIT,
+         offset,
+       }
+     };
      if(text) {
-      setInfo({});
-       fetch(`https://kitsu.io/api/edge/anime?filter[text]=${text}&page[limit]=${LIMIT}`)
+       query.filter = {
+        text,
+       }
+     }
+       fetch(`https://kitsu.io/api/edge/anime?${qs.stringify(query)}`)
        .then((response) => response.json())
        .then((response) => {
          setInfo(response)
        });
-     }
-  }, [text]);
+     
+  }, [text, offset]);
 
   return (
     <div className="App">
@@ -40,7 +55,14 @@ export default function App() {
             ))}
           </ul>
         )}
-        <Pagination limit={LIMIT} total={1200} offset={240}/>
+        {info.meta && (
+          <Pagination 
+            limit={LIMIT}
+            total={info.meta.count} 
+            offset={offset}
+            setOffset={setOffset}
+         />
+         )}
     </div>
   );
 }
